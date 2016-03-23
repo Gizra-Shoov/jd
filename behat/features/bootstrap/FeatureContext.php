@@ -35,4 +35,38 @@ class FeatureContext extends MinkContext implements SnippetAcceptingContext {
   public function iShouldNotHaveAccessToThePage() {
     $this->assertSession()->statusCodeEquals('403');
   }
+
+
+  /**
+   * @When I visit the item page
+   */
+  public function iVisitTheItemPage() {
+    $this->getSession()->visit('http://item.jd.com/1082263.html');
+  }
+
+  /**
+   * @When I click on add to cart button
+   */
+  public function iClickOnAddToCartButton() {
+    $page = $this->getSession()->getPage();
+    $add_to_cart_button = $page->find('css', '#InitCartUrl');
+    $add_to_cart_button->click();
+  }
+
+  /**
+   * @Then I should see :arg1 item in my cart
+   */
+  public function iShouldSeeItemInMyCart($items) {
+    $page = $this->getSession()->getPage();
+    $number_of_items = $page->find('css', '#shopping-amount');
+    $number_of_items->click();
+    $number_of_items = $page->find('css', '#shopping-amount')->getText();
+    if ($number_of_items == $items) {
+      print_r("you have " . $number_of_items . " in the cart");
+    }
+    else {
+      throw new \Exception(sprintf("You do not have the same items like you expect"));
+    }
+
+  }
 }
